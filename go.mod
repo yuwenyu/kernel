@@ -60,3 +60,9 @@ replace (
 	sigs.k8s.io/structured-merge-diff => github.com/kubernetes-sigs/structured-merge-diff v0.0.0-20190426204423-ea680f03cc65
 	sigs.k8s.io/yaml => github.com/kubernetes-sigs/yaml v1.1.0
 )
+
+require (
+	github.com/gin-gonic/gin v1.4.0
+	github.com/kr/pretty v0.1.0 // indirect
+	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
+)
