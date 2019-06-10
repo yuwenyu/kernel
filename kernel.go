@@ -2,7 +2,6 @@ package kernel
 
 import (
 	"io"
-	"log"
 	"os"
 	"time"
 
@@ -11,20 +10,15 @@ import (
 	"github.com/yuwenyu/kernel/help"
 )
 
-func init() {
-
-}
+func init() {}
 
 type Kernel struct {
 	Ic *ini.Ic
 }
 
 func New() *Kernel {
-	log.Println("test kernel")
-	icfg := ini.New()
-	icfg.Dir = "config" + help.Virgule
 	return &Kernel{
-		Ic:icfg,
+		Ic:ini.New().SetDir(help.ConfigDir + help.Virgule),
 	}
 }
 
