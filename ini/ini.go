@@ -43,7 +43,7 @@ func (i *Ic) SetIp(section string) *Ic {
 }
 
 func (i *Ic) Loading() *Ic {
-	fns, err := filepath.Glob(i.h.TempCfg(i.dir, sIni, "*"))
+	fns, err := filepath.Glob(i.h.TempCfgEnv(i.dir, sIni, "*"))
 	if err != nil {
 		panic(fmt.Sprintf("Error: %s", err.Error()))
 	}
@@ -57,6 +57,8 @@ func (i *Ic) Loading() *Ic {
 		arrFns[k] = fn
 	}
 
+	arrFns = append(arrFns, i.dir + "templates." + sIni)
+	fmt.Println(arrFns)
 	cfg, err := ini.Load(arrFns[0], arrFns ...)
 	if err != nil {
 		panic(fmt.Sprintf("Error: %s", err.Error()))
@@ -97,7 +99,7 @@ func (i *Ic) SaveTo(key string, val string, fn string) *Ic {
 	}
 
 	i.K(key).SetValue(val)
-	i.cfg.SaveTo(i.h.TempCfg(i.dir, sIni, fn))
+	i.cfg.SaveTo(i.h.TempCfgEnv(i.dir, sIni, fn))
 	return i
 }
 
