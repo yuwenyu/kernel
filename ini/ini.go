@@ -58,7 +58,8 @@ func (i *Ic) Loading() *Ic {
 	}
 
 	arrFns = append(arrFns, i.dir + "templates." + sIni)
-	fmt.Println(arrFns)
+	arrFns = append(arrFns, i.dir + "commons." + sIni)
+
 	cfg, err := ini.Load(arrFns[0], arrFns ...)
 	if err != nil {
 		panic(fmt.Sprintf("Error: %s", err.Error()))
