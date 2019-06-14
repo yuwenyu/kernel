@@ -6,55 +6,49 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/yuwenyu/kernel/ini"
-	"github.com/yuwenyu/kernel/help"
-	"github.com/yuwenyu/kernel/template"
 )
 
 func init() {}
 
 type Kernel struct {
-	G *gin.Engine
-	Ic *ini.Ic
-	tpl *template.Template
+	Ini *ini
 }
 
 func New() *Kernel {
+	var ini INI = &ini{directory:strCfgDirectory + strVirgule}
 	return &Kernel{
-		G:gin.Default(),
-		Ic:ini.New().SetDir(help.ConfigDir + help.Virgule).Loading(),
-		tpl:template.New(),
+		Ini:ini.Loading(),
 	}
 }
 
-func (k *Kernel) Run(addr string) {
-	sLog, _ := k.Ic.SetIp("common_cfg").K("log_status").Bool()
-	if sLog {
-		k.log()
+func (k *Kernel) Run() *gin.Engine {
+	bLog, _ := k.Ini.K("common_cfg","log_status").Bool()
+	if bLog {
+		gin.DisableConsoleColor()
+
+		fn := "storage/logs/wyu_" + time.Now().Format("2006_01_01") + ".log"
+		f, _ := os.Create(fn)
+		gin.DefaultWriter = io.MultiWriter(f)
 	}
 
-	sTpl, _ := k.Ic.SetIp("common_cfg").K("template_status").Bool()
-	if sTpl {
-		root := k.Ic.SetIp("template_root").K("directory").String()
-		k.G.HTMLRender = k.tpl.SetDir(root).Tpl()
-		k.static()
+	r := gin.Default()
+
+	bTpl, _ := k.Ini.K("common_cfg","template_status").Bool()
+	if bTpl {
+		//var templates templates = &template{
+		//	directory:k.Ic.SetIp("template_root").K("directory").String(),
+		//}
+		var templates templates = &template{
+			directory:k.Ini.K("template_root","directory").String(),
+		}
+		r.HTMLRender = templates.Tpl()
+
+		//static := k.Ic.SetIp("template_statics").K("static").String()
+		//staticFile := k.Ic.SetIp("template_statics").K("static_file").String()
+		//
+		//r.Static("/assets", static)
+		//r.StaticFile("/favicon.ico", staticFile)
 	}
 
-	k.G.Run(addr)
-}
-
-func (k *Kernel) log() {
-	gin.DisableConsoleColor()
-
-	fn := "storage/logs/wyu_" + time.Now().Format("2006_01_01") + ".log"
-	f, _ := os.Create(fn)
-	gin.DefaultWriter = io.MultiWriter(f)
-}
-
-func (k *Kernel) static() {
-	static := k.Ic.SetIp("template_statics").K("static").String()
-	staticFile := k.Ic.SetIp("template_statics").K("static_file").String()
-
-	k.G.Static("/assets", static)
-	k.G.StaticFile("/favicon.ico", staticFile)
+	return r
 }
