@@ -38,6 +38,10 @@ var _ INI = &ini{}
  * ini.K(Section, Key).MustBool(false)
 **/
 
+func NewIni() *ini {
+	return &ini{}
+}
+
 func (i *ini) K(section string, key string) *wyuIni.Key {
 	if i.cfg == nil {
 		panic("Error nil")
@@ -60,14 +64,14 @@ func (i *ini) K(section string, key string) *wyuIni.Key {
 //	return i
 //}
 
-func (i *ini) initialize() {
+func (i *ini) initialized() {
 	if i.directory == "" {
 		i.directory = StrCD
 	}
 }
 
 func (i *ini) Loading() *ini {
-	i.initialize()
+	i.initialized()
 
 	var Helper Helpers = &Helper{directory:i.directory,method:strIni}
 	fns, err := filepath.Glob(Helper.TempCfgEnv("*"))
@@ -94,7 +98,7 @@ func (i *ini) Loading() *ini {
 }
 
 func (i *ini) LoadByFN(fn string) *ini {
-	i.initialize()
+	i.initialized()
 
 	var Helper Helpers = &Helper{directory:i.directory,method:strIni}
 	fns, err := filepath.Glob(Helper.TempCfgEnv(fn))
