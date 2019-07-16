@@ -9,12 +9,14 @@ import (
 
 var (
 	cacheKr *redis.Client
-	redisMX	 sync.Mutex
-	redisMC	 map[string]interface{}
+	redisMX sync.Mutex
+	redisMC map[string]interface{}
 )
 
 func init() {
-	if redisMC == nil {initRedisMC()}
+	if redisMC == nil {
+		initRedisMC()
+	}
 }
 
 type Kr interface {
@@ -101,29 +103,29 @@ func (thisKr *r) Close() {
 }
 
 func initRedisMC() {
-	var c INI = NewIni().LoadByFN("redis")
+	var c INI = NewIni().LoadByFN(ConfRedis)
 
-	addr := c.K("redis", "address").String()
+	addr := c.K(ConfRedis, "address").String()
 	if addr == "" {
 		addr = "127.0.0.1:6379"
 	}
 
-	password := c.K("redis", "password").String()
+	password := c.K(ConfRedis, "password").String()
 
-	db, err := c.K("redis", "db").Int()
+	db, err := c.K(ConfRedis, "db").Int()
 	if err != nil {
 		db = 0
 	}
 
-	intPoolSize, err := c.K("redis", "pool_size").Int()
+	intPoolSize, err := c.K(ConfRedis, "pool_size").Int()
 	if err != nil {
 		intPoolSize = 10
 	}
 
 	redisMC = map[string]interface{}{
-		"Addr":addr,
-		"Password":password,
-		"DB":db,
-		"PoolSize":intPoolSize,
+		"Addr":     addr,
+		"Password": password,
+		"DB":       db,
+		"PoolSize": intPoolSize,
 	}
 }

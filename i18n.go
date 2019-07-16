@@ -22,11 +22,10 @@ func NewI18n() *i18n {
 }
 
 func (thisI18n *i18n) initialize() *i18n {
-	var c INI = &ini{}
-	c.LoadByFN("commons")
+	var c INI = NewIni().LoadByFN(ConfCommons)
 
 	arrFileMap := make(map[string]string)
-	strFileMap := c.K("common_translate", "file_map").String()
+	strFileMap := c.K(ConfCommonsI18n, "file_map").String()
 	if strFileMap == "" {
 		panic("Error Translate File")
 	}
@@ -37,11 +36,11 @@ func (thisI18n *i18n) initialize() *i18n {
 	}
 
 	thisI18n.cfg = cfgII18N{
-		"app":{
+		"app": {
 			SourceNewFunc: ii18n.NewJSONSource,
-			OriginalLang:  c.K("common_translate", "origin_language").String(),
-			BasePath:      c.K("common_translate", "base_path").String(),
-			FileMap: arrFileMap,
+			OriginalLang:  c.K(ConfCommonsI18n, "origin_language").String(),
+			BasePath:      c.K(ConfCommonsI18n, "base_path").String(),
+			FileMap:       arrFileMap,
 		},
 	}
 	ii18n.NewI18N(thisI18n.cfg)
@@ -52,5 +51,3 @@ func (thisI18n *i18n) T(cg string, key string, ln string) string {
 	thisI18n.initialize()
 	return ii18n.T(cg, key, nil, ln)
 }
-
-

@@ -10,23 +10,29 @@ import (
 )
 
 const (
-	StrCD string = "config" // directory of config (string)
+	StrCD      string = "config" // directory of config (string)
 	StrVirgule string = "/"
-	StrUL string = "_"
-	StrDOT string = "."
-	StrColon string = ":"
+	StrUL      string = "_"
+	StrDOT     string = "."
+	StrColon   string = ":"
 
 	SysTimeFormat string = "2006-01-02 00:00:00"
 	SysDateFormat string = "2006-01-02"
 	DirDateFormat string = "20060102" // Directory Time Format
+
+	ConfDB          string = "db"
+	ConfDbEngine    string = "db_engine"
+	ConfRedis       string = "redis"
+	ConfCommons     string = "commons"
+	ConfCommonsI18n string = "common_translate"
 )
 
 var (
-	SysTimeLocation, _ = time.LoadLocation("Asia/Shanghai")
-	MapTimeFormat map[string]string = map[string]string{
-		"STF":time.Now().Format(SysTimeFormat),
-		"SDF":time.Now().Format(SysDateFormat),
-		"DDF":time.Now().Format(DirDateFormat),
+	SysTimeLocation, _                   = time.LoadLocation("Asia/Shanghai")
+	MapTimeFormat      map[string]string = map[string]string{
+		"STF": time.Now().Format(SysTimeFormat),
+		"SDF": time.Now().Format(SysDateFormat),
+		"DDF": time.Now().Format(DirDateFormat),
 	}
 )
 
@@ -36,7 +42,7 @@ type Helpers interface {
 
 type Helper struct {
 	directory string
-	method string
+	method    string
 }
 
 var _ Helpers = &Helper{}

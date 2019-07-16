@@ -10,8 +10,8 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/go-xorm/xorm"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/go-xorm/xorm"
 )
 
 var dbEngines map[int]db
@@ -21,21 +21,23 @@ type DB interface {
 }
 
 type db struct {
-	id int
+	id     int
 	engine *xorm.Engine
-	mx sync.Mutex
+	mx     sync.Mutex
 }
 
 var _ DB = &db{}
 
 func NewDB(src int) *db {
-	if src <= 0 { src = 1 }
+	if src <= 0 {
+		src = 1
+	}
 
 	var object *db
 	if v, ok := dbEngines[src]; ok {
 		object = &v
 	} else {
-		object = &db{id:src}
+		object = &db{id: src}
 	}
 
 	return object
@@ -85,7 +87,6 @@ func (odbc *db) instanceMaster() *db {
 	engine.ShowSQL(ds.showedSQL)
 	engine.SetTZDatabase(SysTimeLocation)
 
-
 	if ds.cachedSQL {
 		cached := xorm.NewLRUCacher(xorm.NewMemoryStore(), 1000)
 		engine.SetDefaultCacher(cached)
@@ -99,27 +100,27 @@ func (odbc *db) instanceMaster() *db {
 }
 
 type dataSource struct {
-	dn 		 	string
-	host 	 	string
-	port 	 	int
-	table 	 	string
-	username 	string
-	password 	string
-	maxOpen	 	int
-	maxIdle	 	int
-	showedSQL	bool
-	cachedSQL	bool
+	dn        string
+	host      string
+	port      int
+	table     string
+	username  string
+	password  string
+	maxOpen   int
+	maxIdle   int
+	showedSQL bool
+	cachedSQL bool
 }
 
 func (odbc *db) initDataSource() *dataSource {
-	var key string = "db_engine" + StrUL + strconv.Itoa(odbc.id)
-	var c INI = NewIni().LoadByFN("db")
+	var key string = ConfDbEngine + StrUL + strconv.Itoa(odbc.id)
+	var c INI = NewIni().LoadByFN(ConfDB)
 
-	dn 		:= c.K(key, "driver").String()
-	host 	:= c.K(key, "host").String()
-	table 	:= c.K(key, "table").String()
-	username:= c.K(key, "username").String()
-	password:= c.K(key, "password").String()
+	dn := c.K(key, "driver").String()
+	host := c.K(key, "host").String()
+	table := c.K(key, "table").String()
+	username := c.K(key, "username").String()
+	password := c.K(key, "password").String()
 
 	port, errPort := c.K(key, "port").Int()
 	if errPort != nil {
@@ -147,15 +148,15 @@ func (odbc *db) initDataSource() *dataSource {
 	}
 
 	return &dataSource{
-		dn:       	dn,
-		host:     	host,
-		port:     	port,
-		table:    	table,
-		username: 	username,
-		password: 	password,
-		maxOpen:  	maxOpen,
-		maxIdle:  	maxIdle,
-		showedSQL:	showedSQL,
-		cachedSQL:	cachedSQL,
+		dn:        dn,
+		host:      host,
+		port:      port,
+		table:     table,
+		username:  username,
+		password:  password,
+		maxOpen:   maxOpen,
+		maxIdle:   maxIdle,
+		showedSQL: showedSQL,
+		cachedSQL: cachedSQL,
 	}
 }
