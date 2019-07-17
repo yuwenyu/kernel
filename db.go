@@ -113,39 +113,29 @@ type dataSource struct {
 }
 
 func (odbc *db) initDataSource() *dataSource {
-	var key string = ConfDbEngine + StrUL + strconv.Itoa(odbc.id)
+	var section string = MapConfLists[ConfDB][0] + StrUL + strconv.Itoa(odbc.id)
 	var c INI = NewIni().LoadByFN(ConfDB)
 
-	dn := c.K(key, "driver").String()
-	host := c.K(key, "host").String()
-	table := c.K(key, "table").String()
-	username := c.K(key, "username").String()
-	password := c.K(key, "password").String()
+	dn 		:= c.K(section, MapConfParam[MapConfLists[ConfDB][0]][0]).String()
+	host 	:= c.K(section, MapConfParam[MapConfLists[ConfDB][0]][1]).String()
+	table 	:= c.K(section, MapConfParam[MapConfLists[ConfDB][0]][3]).String()
+	username:= c.K(section, MapConfParam[MapConfLists[ConfDB][0]][4]).String()
+	password:= c.K(section, MapConfParam[MapConfLists[ConfDB][0]][5]).String()
 
-	port, errPort := c.K(key, "port").Int()
-	if errPort != nil {
-		port = 3306
-	}
+	port, errPort	:= c.K(section, MapConfParam[MapConfLists[ConfDB][0]][2]).Int()
+	if errPort != nil {port = KDbPort}
 
-	maxOpen, errOpen := c.K(key, "max_open").Int()
-	if errOpen != nil {
-		maxOpen = 50
-	}
+	maxOpen, errOpen:= c.K(section, MapConfParam[MapConfLists[ConfDB][0]][6]).Int()
+	if errOpen != nil {maxOpen = KDbMaxOpen}
 
-	maxIdle, errIdle := c.K(key, "max_idle").Int()
-	if errIdle != nil {
-		maxIdle = 200
-	}
+	maxIdle, errIdle:= c.K(section, MapConfParam[MapConfLists[ConfDB][0]][7]).Int()
+	if errIdle != nil {maxIdle = KDbMaxIdle}
 
-	showedSQL, errShowedSQL := c.K(key, "showed_sql").Bool()
-	if errShowedSQL != nil {
-		showedSQL = false
-	}
+	showedSQL, errShowedSQL := c.K(section, MapConfParam[MapConfLists[ConfDB][0]][8]).Bool()
+	if errShowedSQL != nil {showedSQL = KDbShowedSQL}
 
-	cachedSQL, errCachedSQL := c.K(key, "cached_sql").Bool()
-	if errCachedSQL != nil {
-		cachedSQL = false
-	}
+	cachedSQL, errCachedSQL := c.K(section, MapConfParam[MapConfLists[ConfDB][0]][9]).Bool()
+	if errCachedSQL != nil {cachedSQL = KDbCachedSQL}
 
 	return &dataSource{
 		dn:        dn,

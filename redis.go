@@ -105,22 +105,28 @@ func (thisKr *r) Close() {
 func initRedisMC() {
 	var c INI = NewIni().LoadByFN(ConfRedis)
 
-	addr := c.K(ConfRedis, "address").String()
-	if addr == "" {
-		addr = "127.0.0.1:6379"
-	}
+	addr 			:= c.K(
+		MapConfLists[ConfRedis][0],
+		MapConfParam[MapConfLists[ConfRedis][0]][0],
+	).String()
+	if addr == "" {addr = KRedisAddr}
 
-	password := c.K(ConfRedis, "password").String()
+	password 		:= c.K(
+		MapConfLists[ConfRedis][0],
+		MapConfParam[MapConfLists[ConfRedis][0]][1],
+	).String()
 
-	db, err := c.K(ConfRedis, "db").Int()
-	if err != nil {
-		db = 0
-	}
+	db, err 		:= c.K(
+		MapConfLists[ConfRedis][0],
+		MapConfParam[MapConfLists[ConfRedis][0]][2],
+	).Int()
+	if err != nil {db = KRedisDB}
 
-	intPoolSize, err := c.K(ConfRedis, "pool_size").Int()
-	if err != nil {
-		intPoolSize = 10
-	}
+	intPoolSize, err:= c.K(
+		MapConfLists[ConfRedis][0],
+		MapConfParam[MapConfLists[ConfRedis][0]][3],
+	).Int()
+	if err != nil {intPoolSize = KRedisPoolSize}
 
 	redisMC = map[string]interface{}{
 		"Addr":     addr,

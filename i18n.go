@@ -25,10 +25,11 @@ func (thisI18n *i18n) initialize() *i18n {
 	var c INI = NewIni().LoadByFN(ConfCommons)
 
 	arrFileMap := make(map[string]string)
-	strFileMap := c.K(ConfCommonsI18n, "file_map").String()
-	if strFileMap == "" {
-		panic("Error Translate File")
-	}
+	strFileMap := c.K(
+		MapConfLists[ConfCommons][0],
+		MapConfParam[MapConfLists[ConfCommons][0]][2],
+	).String()
+	if strFileMap == "" {panic("Error Translate File")}
 
 	for _, strFM := range strings.Split(strFileMap, ",") {
 		arrFM := strings.Split(strFM, ":")
@@ -38,8 +39,14 @@ func (thisI18n *i18n) initialize() *i18n {
 	thisI18n.cfg = cfgII18N{
 		"app": {
 			SourceNewFunc: ii18n.NewJSONSource,
-			OriginalLang:  c.K(ConfCommonsI18n, "origin_language").String(),
-			BasePath:      c.K(ConfCommonsI18n, "base_path").String(),
+			OriginalLang:  c.K(
+							MapConfLists[ConfCommons][0],
+							MapConfParam[MapConfLists[ConfCommons][0]][0],
+						   ).String(),
+			BasePath:      c.K(
+							MapConfLists[ConfCommons][0],
+							MapConfParam[MapConfLists[ConfCommons][0]][1],
+						   ).String(),
 			FileMap:       arrFileMap,
 		},
 	}
