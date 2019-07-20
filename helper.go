@@ -10,6 +10,8 @@ import (
 )
 
 const (
+	SysName		string = "WYU"
+	SysOsEnv	string = "WYU_ENV"
 	sysLoadLocation	string = "Asia/Shanghai"
 
 	StrCD      string = "config" // directory of config (string)
@@ -25,16 +27,23 @@ const (
 	ConfDB          string = "db"
 	ConfRedis       string = "redis"
 	ConfCommons     string = "commons"
+	ConfTemplates	string = "templates"
 
 	KRedisAddr		string = "127.0.0.1:6379"
 	KRedisDB		int = 0
 	KRedisPoolSize	int = 10
+
+	KCommLogRoot		string = "storage" + StrVirgule + "logs" + StrVirgule
+	KCommLogPrefixFn	string = SysName
 
 	KDbPort		int = 3306
 	KDbMaxOpen	int = 50
 	KDbMaxIdle	int = 200
 	KDbShowedSQL	bool = false
 	KDbCachedSQL	bool = false
+
+	KTempStatic		string = "./resources/assets"
+	KTempStaticFile	string = "./resources/favicon.ico"
 )
 
 var (
@@ -53,6 +62,12 @@ var (
 		},
 		ConfCommons:	map[int]string{
 			0:"common_translate",
+			1:"common_cfg",
+			2:"common_log",
+		},
+		ConfTemplates:	map[int]string{
+			0:"template_statics",
+			1:"template_root",
 		},
 	}
 	MapConfParam map[string]map[int]string	= map[string]map[int]string{
@@ -79,6 +94,24 @@ var (
 			1:"base_path",
 			2:"file_map",
 		},
+		MapConfLists[ConfCommons][1]:	map[int]string{
+			0:"template_status",
+			1:"template_static_status",
+		},
+		MapConfLists[ConfCommons][2]:	map[int]string{
+			0:"log_status",
+			1:"log_root",
+			2:"log_fn_prefix",
+		},
+		MapConfLists[ConfTemplates][0]:	map[int]string{
+			0:"static",
+			1:"static_file",
+		},
+		MapConfLists[ConfTemplates][1]:	map[int]string{
+			0:"directory",
+			1:"directory_view",
+			2:"resources",
+		},
 	}
 )
 
@@ -98,7 +131,7 @@ func (h *Helper) TempCfgEnv(fn string) string {
 		panic("Error Empty Helper ...")
 	}
 
-	strEnv := os.Getenv("WYU_ENV")
+	strEnv := os.Getenv(SysOsEnv)
 	if strEnv == "" {
 		panic("Error ENV(WYU_ENV) Helper ...")
 	}

@@ -36,39 +36,50 @@ func (k *Kernel) Run() *gin.Engine {
 
 func (k *Kernel) GinTemplate() multitemplate.Renderer {
 	var templates templates = &template{
-		directory:k.Ini.K("template_root","directory").String(),
+		directory:k.Ini.K(
+			MapConfLists[ConfTemplates][1],
+			MapConfParam[MapConfLists[ConfTemplates][1]][0],
+		).String(),
 	}
 	return templates.Tpl()
 }
 
 func (k *Kernel) GinTemplateLoadByView(skeleton string, view string) []string {
 	var templates templates = &template{
-		directory:k.Ini.K("template_root","directory").String(),
+		directory:k.Ini.K(
+			MapConfLists[ConfTemplates][1],
+			MapConfParam[MapConfLists[ConfTemplates][1]][0],
+		).String(),
 	}
 	return templates.LoadingTPL(skeleton, view)
 }
 
 func (k *Kernel) ginInitialize() {
-	bLog, _ := k.Ini.K("common_cfg","log_status").Bool()
+	bLog, _ := k.Ini.K(
+		MapConfLists[ConfCommons][2],
+		MapConfParam[MapConfLists[ConfCommons][2]][0],
+	).Bool()
 	if bLog {
 		gin.DisableConsoleColor()
 
-		cfgLogRoot := k.Ini.K("common_log","log_root").String()
-		if cfgLogRoot == "" {
-			cfgLogRoot = "storage" + StrVirgule + "logs" + StrVirgule
-		}
+		logRoot := k.Ini.K(
+			MapConfLists[ConfCommons][2],
+			MapConfParam[MapConfLists[ConfCommons][2]][1],
+		).String()
+		if logRoot == "" {logRoot = KCommLogRoot}
 
-		_, err := os.Stat(cfgLogRoot)
+		_, err := os.Stat(logRoot)
 		if err != nil {
 			panic(err.Error())
 		}
 
-		cfgLogPrefixFN := k.Ini.K("common_log","log_fn_prefix").String()
-		if cfgLogPrefixFN == "" {
-			cfgLogPrefixFN = "wyu"
-		}
+		logPrefixFN := k.Ini.K(
+			MapConfLists[ConfCommons][2],
+			MapConfParam[MapConfLists[ConfCommons][2]][2],
+		).String()
+		if logPrefixFN == "" {logPrefixFN = KCommLogPrefixFn}
 
-		fn := cfgLogRoot + StrVirgule + cfgLogPrefixFN + StrUL + MapTimeFormat["DDF"] + ".log"
+		fn := logRoot + StrVirgule + logPrefixFN + StrUL + MapTimeFormat["DDF"] + ".log"
 		f, _ := os.Create(fn)
 		gin.DefaultWriter = io.MultiWriter(f)
 	} else {
@@ -77,10 +88,22 @@ func (k *Kernel) ginInitialize() {
 }
 
 func (k *Kernel) ginTemplateStatic(r *gin.Engine) *gin.Engine {
-	bTplStatic, _ := k.Ini.K("common_cfg", "template_static_status").Bool()
+	bTplStatic, _ := k.Ini.K(
+		MapConfLists[ConfCommons][1],
+		MapConfParam[MapConfLists[ConfCommons][1]][1],
+	).Bool()
 	if bTplStatic {
-		static := k.Ini.K("template_statics","static").String()
-		staticFile := k.Ini.K("template_statics","static_file").String()
+		static 		:= k.Ini.K(
+			MapConfLists[ConfTemplates][0],
+			MapConfParam[MapConfLists[ConfTemplates][0]][0],
+		).String()
+		if static == "" {static = KTempStatic}
+
+		staticFile 	:= k.Ini.K(
+			MapConfLists[ConfTemplates][0],
+			MapConfParam[MapConfLists[ConfTemplates][0]][1],
+		).String()
+		if staticFile == "" {staticFile = KTempStaticFile}
 
 		r.Static("/assets", static)
 		r.StaticFile("/favicon.ico", staticFile)
