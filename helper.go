@@ -14,11 +14,14 @@ const (
 	SysOsEnv	string = "WYU_ENV"
 	sysLoadLocation	string = "Asia/Shanghai"
 
-	StrCD      string = "config" // directory of config (string)
-	StrVirgule string = "/"
-	StrUL      string = "_"
-	StrDOT     string = "."
-	StrColon   string = ":"
+	StrCD      			string = "config" // directory of config (string)
+	StrVirgule 			string = "/"
+	StrDoubleVirgule	string = "//"
+	StrUL      			string = "_"
+	StrDOT     			string = "."
+	StrColon   			string = ":"
+	StrHttp				string = "http"
+	StrHttps			string = "https"
 
 	SysTimeFormat string = "2006-01-02 00:00:00"
 	SysDateFormat string = "2006-01-02"
