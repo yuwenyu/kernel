@@ -23,7 +23,7 @@ const (
 	StrHttp				string = "http"
 	StrHttps			string = "https"
 
-	SysTimeFormat string = "2006-01-02 00:00:00"
+	SysTimeFormat string = "2006-01-02 15:04:05"
 	SysDateFormat string = "2006-01-02"
 	DirDateFormat string = "20060102" // Directory Time Format
 
